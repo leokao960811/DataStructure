@@ -15,14 +15,15 @@ from autogen_ext.agents.web_surfer import MultimodalWebSurfer
 
 load_dotenv()
 
+#HW1_Prompt Change
 async def process_chunk(chunk, start_idx, total_records, model_client, termination_condition):
     """
     處理單一批次資料：
       - 將該批次資料轉成 dict 格式
       - 組出提示，要求各代理人根據該批次資料進行分析，
-        並提供寶寶照護建議。
+        並提供完整課程建議。
       - 請 MultimodalWebSurfer 代理人利用外部網站搜尋功能，
-        搜尋最新寶寶照護建議資訊（例如餵食、睡眠、尿布更換等），
+        搜尋台灣目前的教育政策趨勢，
         並將搜尋結果納入建議中。
       - 收集所有回覆訊息並返回。
     """
@@ -82,6 +83,7 @@ async def main():
     termination_condition = TextMentionTermination("exit")
     
     # 使用 pandas 以 chunksize 方式讀取 CSV 檔案
+    #HW1_CSV Data Change
     csv_file_path = "DataMining06.csv"
     chunk_size = 1000
     chunks = list(pd.read_csv(csv_file_path, chunksize=chunk_size))
