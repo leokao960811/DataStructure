@@ -7,8 +7,8 @@ load_dotenv()
 MOODLE_USERNAME = os.getenv("MOODLE_USERNAME")
 MOODLE_PASSWORD = os.getenv("MOODLE_PASSWORD")
 
-DOWNLOAD_PATH = os.path.abspath("downloads")  # Create a "downloads" folder in the script directory
-os.makedirs(DOWNLOAD_PATH, exist_ok=True)  # Ensure the folder exists
+DOWNLOAD_PATH = os.path.abspath("downloads")  # 創建downloads目錄
+os.makedirs(DOWNLOAD_PATH, exist_ok=True)  # 確認目錄是否存在
 
 with sync_playwright() as p:
     browser = p.chromium.launch(headless=False)  # 顯示瀏覽器
