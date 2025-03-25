@@ -2,7 +2,7 @@
 
 HW1檔案：DataAgent_TEST.py
 
-HW2檔案：DRai資料夾
+HW2檔案：DRaiTEST資料夾
 
 HW3檔案：postAI_TEST.py
 
