@@ -61,6 +61,7 @@ def select_dialogue_column(chunk: pd.DataFrame) -> str:
     print("CSV 欄位：", list(chunk.columns))
     return chunk.columns[0]
 
+# HW2
 def process_batch_dialogue(client, dialogues: list, delimiter="-----"):
     """
     將多筆逐字稿合併成一個批次請求。
@@ -111,6 +112,7 @@ def main():
         print("Usage: python DRai.py <path_to_csv>")
         sys.exit(1)
     
+    # HW2
     input_csv = sys.argv[1]
     output_csv = "Emotion_batch.csv"
     if os.path.exists(output_csv):
