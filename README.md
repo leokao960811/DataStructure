@@ -4,7 +4,7 @@ HW1檔案：DataAgent_TEST.py
 
 HW2檔案：DRaiTEST 資料夾
 
-HW3檔案：postAI_TEST.py
+HW3檔案：PostAITEST 資料夾
 
 
 ### AI Agent 設計圖：
