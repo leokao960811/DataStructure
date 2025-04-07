@@ -36,7 +36,7 @@
 該週程式以HW2為起始點進行PDF的生成。
 
 PDF的生成方式：
-1. 先將生成的轉成HTML
+1. 先將生成的CSV檔轉成HTML形式
 2. 將轉好的HTML交由pdfkit轉成PDF檔
 
 介面以gradio製作，使用者可輸入自己的PDF檔。
