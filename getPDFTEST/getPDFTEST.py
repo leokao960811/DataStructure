@@ -1,18 +1,44 @@
 import os
 from datetime import datetime
-import requests
 import gradio as gr
 import pandas as pd
 from dotenv import load_dotenv
 from fpdf import FPDF
 from google import genai
-import re
-import textwrap
+import pdfkit
+from jinja2 import Template
 
 # 載入環境變數並設定 API 金鑰
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=api_key)
+
+WKHTMLTOPDF_PATH=r"D:\Programmed Files\Python\TEST\wkhtmltox\bin\wkhtmltopdf.exe"
+
+config=pdfkit.configuration(wkhtmltopdf=WKHTMLTOPDF_PATH)
+
+# 定義 HTML 模板
+html_template = """
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataFrame PDF</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        .table { width: 80%; margin: auto; border-collapse: collapse; }
+        .table th, .table td { border: 1px solid black; padding: 8px; text-align: center; }
+        .table th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h2>PDF 生成</h2>
+    {{ table | safe }}
+</body>
+</html>
+"""
+
 
 def get_chinese_font_file() -> str:
     """
@@ -29,43 +55,9 @@ def get_chinese_font_file() -> str:
     print("未在系統中找到候選中文字型檔案。")
     return None
 
-def create_table(pdf: FPDF, df: pd.DataFrame):
-    """
-    使用 FPDF 將 DataFrame 以漂亮的表格形式繪製至 PDF，
-    使用交替背景色與標題區塊，並自動處理分頁。
-    """
-    available_width = pdf.w - 2 * pdf.l_margin
-    num_columns = len(df.columns)
-    col_width = available_width / num_columns
-    cell_height = 10
+def create_table(df: pd.DataFrame):
+    return df.to_html(index=False,classes="table table-bordered")
 
-    # 表頭：使用淺灰色背景
-    pdf.set_fill_color(200, 200, 200)
-    pdf.set_font("ChineseFont", "", 12)
-    for col in df.columns:
-        pdf.cell(col_width, cell_height, str(col), border=1, align="C", fill=True)
-    pdf.ln(cell_height)
-
-    # 資料行：交替背景色
-    pdf.set_font("ChineseFont", "", 12)
-    fill = False
-    for index, row in df.iterrows():
-        if pdf.get_y() + cell_height > pdf.h - pdf.b_margin:
-            pdf.add_page()
-            pdf.set_fill_color(200, 200, 200)
-            pdf.set_font("ChineseFont", "", 12)
-            for col in df.columns:
-                pdf.cell(col_width, cell_height, str(col), border=1, align="C", fill=True)
-            pdf.ln(cell_height)
-            pdf.set_font("ChineseFont", "", 12)
-        if fill:
-            pdf.set_fill_color(230, 240, 255)
-        else:
-            pdf.set_fill_color(255, 255, 255)
-        for item in row:
-            pdf.cell(col_width, cell_height, str(item), border=1, align="C", fill=True)
-        pdf.ln(cell_height)
-        fill = not fill
 
 def parse_markdown_table(markdown_text: str) -> pd.DataFrame:
     """
@@ -94,23 +86,13 @@ def parse_markdown_table(markdown_text: str) -> pd.DataFrame:
     df = pd.DataFrame(data, columns=headers)
     return df
 
+#HW4 以HTML生成PDF
 def generate_pdf(text: str = None, df: pd.DataFrame = None) -> str:
+
     print("開始生成 PDF")
-    pdf = FPDF(format="A4")
-    pdf.add_page()
-    
-    # 取得中文字型
-    chinese_font_path = get_chinese_font_file()
-    if not chinese_font_path:
-        error_msg = "錯誤：無法取得中文字型檔，請先安裝合適的中文字型！"
-        print(error_msg)
-        return error_msg
-    
-    pdf.add_font("ChineseFont", "", chinese_font_path, uni=True)
-    pdf.set_font("ChineseFont", "", 12)
-    
+    html_table=""
     if df is not None:
-        create_table(pdf, df)
+        create_table(df)
     elif text is not None:
         # 嘗試檢查 text 是否包含 Markdown 表格格式
         if "|" in text:
@@ -118,17 +100,24 @@ def generate_pdf(text: str = None, df: pd.DataFrame = None) -> str:
             table_part = "\n".join([line for line in text.splitlines() if line.strip().startswith("|")])
             parsed_df = parse_markdown_table(table_part)
             if parsed_df is not None:
-                create_table(pdf, parsed_df)
+                html_table=create_table(parsed_df)
             else:
                 pdf.multi_cell(0, 10, text)
         else:
             pdf.multi_cell(0, 10, text)
     else:
         pdf.cell(0, 10, "沒有可呈現的內容")
+
+
+    template=Template(html_template)
+    html_content=template.render(table=html_table)
     
     pdf_filename = f"report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+    html_file="output.html"
+    with open(html_file, "w", encoding="utf-8") as file:
+        file.write(html_content)
     print("輸出 PDF 至檔案：", pdf_filename)
-    pdf.output(pdf_filename)
+    pdfkit.from_file("output.html", pdf_filename, verbose=True, configuration=config, options={"enable-local-file-access": True})
     print("PDF 生成完成")
     return pdf_filename
 
@@ -177,6 +166,7 @@ def gradio_handler(csv_file, user_prompt):
         pdf_path = generate_pdf(text=response_text)
         return response_text, pdf_path
 
+#HW2 的prompt、csv讀入
 default_prompt = """請分析以下日記中每一句話的出現的情緒，進行分類：
 
 "快樂",
