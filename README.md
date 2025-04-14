@@ -21,6 +21,11 @@
 
 最後解析 API 回傳的 JSON 結果，並將結果寫入新的 CSV 檔案
 
+程式執行結果：
+
+![螢幕擷取畫面 2025-04-14 184226](https://github.com/user-attachments/assets/13d3a9d2-c319-43ba-82f6-ca16fa25d49b)
+
+
 ### HW3檔案：PostAITEST 資料夾
 
 該週程式用playwright進行自動化網頁瀏覽，這次製作一個自動下載、備份的程式
