@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-Hant">
+      <head>
+        <meta charset="UTF-8">
+        <title>CSV 報表生成器</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+      </head>
+
+      <body class="bg-light">
+        <div class="container py-5">
+          <h1 class="mb-4 text-center">CSV 報表生成器</h1>
+      
+          <form method="post" enctype="multipart/form-data" class="mb-4 p-4 bg-white rounded shadow-sm">
+            <div class="mb-3">
+              <label class="form-label">上傳 CSV 檔案</label>
+              <input type="file" name="csv_file" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">請輸入分析指令</label>
+              <textarea name="user_prompt" class="form-control" rows="8">{{ default_prompt }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">生成報表</button>
+          </form>
+      
+          <form method="post" action="/search" class="mb-4 p-4 bg-white rounded shadow-sm">
+            <button type="submit" class="btn btn-secondary">尋找相關資料</button>
+          </form>
+      
+          {% if response_text %}
+          <div class="card mb-4">
+            <div class="card-header">回應內容</div>
+            <div class="card-body">
+              <pre style="white-space: pre-wrap;">{{ response_text }}</pre>
+            </div>
+          </div>
+          {% endif %}
+      
+          {% if pdf_path %}
+          <a href="{{ url_for('download', path=pdf_path) }}" class="btn btn-success">下載 PDF 報表</a>
+          {% endif %}
+        </div>
+      </body>
+</html>
