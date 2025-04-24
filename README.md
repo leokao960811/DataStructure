@@ -48,6 +48,11 @@ PDF的生成方式：
 
 下方有一個按鍵，會自動開啟網頁搜尋論壇上跟心理健康有關的內容。
 
+### HW5檔案：HW5TEST 資料夾
+
+該週程式是將HW4的主程式轉換成flask的APP，
+其中使用bootstrap進行HTML介面的優化。
+
 ## AI Agent 設計圖：
 
 ![AI Agent](https://github.com/user-attachments/assets/63da1fc0-ec58-4b6f-92d5-80e72e1a1c38)
