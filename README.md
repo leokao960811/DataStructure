@@ -53,6 +53,8 @@ PDF的生成方式：
 該週程式是將HW4的主程式轉換成flask的APP，
 其中使用bootstrap進行HTML介面的優化。
 
+![螢幕擷取畫面 2025-05-09 173415](https://github.com/user-attachments/assets/da6306be-926e-4d27-8739-055a2c1a8460)
+
 ## AI Agent 設計圖：
 
 ![AI Agent](https://github.com/user-attachments/assets/63da1fc0-ec58-4b6f-92d5-80e72e1a1c38)
